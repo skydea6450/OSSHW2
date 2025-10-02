@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View</title>
+    <link rel="stylesheet" href="my.css"> 
+</head>
+
+<body>
+    <div class="title">중,고등 공부 프로그램</div><br>
+
+    <div class="main-content-wrapper"> 
+        
+        <div style="display:flex;">
+            <img src="https://previews.123rf.com/images/aquir/aquir1906/aquir190606651/125693673-example-stamp-example-square-grunge-sign-example.jpg" style="width: 40%; max-width: 300px;">
+
+            <div style="flex:1; margin-left:20px; margin-top:0px;">
+                <div class="form-group" style="margin-top: 0px;">
+                    <label for="grade" class="form-label"><span style="color:red">*</span> 학년</label>
+                    <input type="text" id="grade" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="day" class="form-label">등록일</label>
+                    <input type="text" id="day" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="title" class="form-label"><span style="color:red">*</span> 교재 제목</label>
+                    <input type="text" id="title" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="range" class="form-label"><span style="color:red">*</span> 공부 범위</label>
+                    <input type="text" id="range" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="from" class="form-label"><span style="color:red">*</span> 출판사</label>
+                    <input type="text" id="from" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="link" class="form-label">링크</label>
+                    <input type="text" id="link" class="form-input">
+                </div>
+                
+            </div>
+        </div>
+
+        <button class="button_style" onclick="goSaveData()">확인</button>
+        <button class="button_style" onclick="goToindexPage()">취소</button>
+        
+    </div>
+
+    <script>
+        let targetPage;
+
+        function goSaveData(){
+            const grade = document.getElementById('grade').value.trim();
+            const title = document.getElementById('title').value.trim();
+            const from = document.getElementById('from').value.trim();
+            const range = document.getElementById('range').value.trim();
+        
+            const requiredFields = {
+                grade: '학년',
+                title: '교재 제목',
+                from: '출판사',
+                range: '공부 범위'
+            };
+        
+            let missingFields = []; 
+
+
+            if (!grade) {
+                missingFields.push(requiredFields.grade);
+            }
+            if (!title) {
+                missingFields.push(requiredFields.title);
+            }
+            if (!from) {
+                missingFields.push(requiredFields.from);
+            }
+            if (!range) {
+                missingFields.push(requiredFields.range);
+            }
+        
+            if (missingFields.length > 0) {
+                const errorMessage = `다음 항목은 필수 입력값입니다. 값을 추가해주세요:\n\n- ${missingFields.join('\n- ')}`;
+            
+                alert(errorMessage);
+            
+                return; 
+            }
+
+        alert("게시물이 추가됩니다.");
+        }
+
+        function goToindexPage(){
+            targetPage = "index.html";
+
+            window.location.href = targetPage;
+        }
+    </script>
+</body>
+</html>

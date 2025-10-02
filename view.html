@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View</title>
+    <link rel="stylesheet" href="my.css"> 
+</head>
+
+<body>
+    <div class="title">중,고등 공부 프로그램</div><br>
+
+    <div class="main-content-wrapper"> 
+        
+        <div style="display:flex;">
+            <img src="https://previews.123rf.com/images/aquir/aquir1906/aquir190606651/125693673-example-stamp-example-square-grunge-sign-example.jpg" style="width: 40%; max-width: 300px;">
+
+            <div style="flex:1; margin-left:20px; margin-top:0px;">
+                <div class="form-group" style="margin-top: 0px;">
+                    <label for="grade" class="form-label"><span style="color:red">*</span> 학년</label>
+                    <input type="text" id="grade" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="day" class="form-label"><span style="color:red">*</span> 등록일</label>
+                    <input type="text" id="day" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="title" class="form-label"><span style="color:red">*</span> 교재 제목</label>
+                    <input type="text" id="title" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="range" class="form-label"><span style="color:red">*</span> 공부 범위</label>
+                    <input type="text" id="range" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="from" class="form-label"><span style="color:red">*</span> 출판사</label>
+                    <input type="text" id="from" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="link" class="form-label"><span style="color:red">*</span> 링크</label>
+                    <input type="text" id="link" class="form-input">
+                </div>
+                
+            </div>
+        </div>
+
+        <button class="button_style" onclick="goToeditPage()">수정</button>
+        <button class="button_style" onclick="goTodelete()">삭제</button>
+        <button class="button_style" onclick="goToindexPage()">목록</button>
+        
+    </div>
+
+    <script>
+        let targetPage;
+
+        function goToeditPage(clickedElement){
+            const data = collectFormData(); 
+            const queryString = new URLSearchParams(data).toString();
+            targetPage = "edit.html";
+            window.location.href = `${targetPage}?${queryString}`;
+        }
+
+
+        function collectFormData() {
+
+            const fieldMap = {
+                'grade': 'grade',
+                'day': 'date', 
+                'title': 'courseType',
+                'range': 'subject', 
+                'from': 'publisher', 
+                'link': 'linkUrl' 
+            };
+
+            const data = {};
+            for (const elementId in fieldMap) {
+                const key = fieldMap[elementId];
+                const element = document.getElementById(elementId);
+                if (element) {
+                    data[key] = element.value;
+                }
+            }
+        
+            const imgElement = document.querySelector('img');
+            if (imgElement && imgElement.src) {
+                data['imgUrl'] = imgElement.src; 
+            }
+
+            return data;
+        }
+
+        function goToindexPage(clickedElement){
+            targetPage = "index.html";
+
+            window.location.href = targetPage;
+        }
+
+        function goTodelete(clickedElement){
+            if (confirm("게시물을 삭제할까요?")) {
+                console.log("게시물 삭제를 진행합니다.");
+            } else {
+                console.log("게시물 삭제가 취소되었습니다.");
+            }
+        }
+
+        function getUrlParams() {
+            const params = {};
+        
+            const queryString = window.location.search.substring(1); 
+        
+       
+            queryString.split('&').forEach(pair => {
+                const [key, value] = pair.split('=');
+            
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
+
+        function loadDataToForm() {
+            const data = getUrlParams();
+            console.log("파싱된 데이터:", data);
+
+            document.getElementById('grade').value = data.grade || '';
+            document.getElementById('day').value = data.date || '';
+            document.getElementById('title').value = data.courseType || '';
+            document.getElementById('range').value = data.subject || '';
+            document.getElementById('from').value = data.publisher || '';
+            document.getElementById('link').value = data.linkUrl || '';
+
+            const imgElement = document.querySelector('img');
+            if (imgElement && data.imgUrl) {
+                imgElement.src = data.imgUrl;
+            }
+        }
+
+        window.onload = loadDataToForm; 
+    </script>
+</body>
+</html>
