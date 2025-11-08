@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>my_ajax.html</title>
+</head>
+<body>
+    <h1 class = "header">AJAX Example</h1><br>
+
+    <button onclick = "LoadData()">데이터 불러오기</button><br><br>
+
+    <input type = "text" class = "address" id = "name" placeholder = "name"></input>
+    <input type = "text" class = "address" id = "age" placeholder = "age"></input>
+    <input type = "text" class = "address" id = "major" placeholder = "major"></input>
+    <input type = "text" class = "address" id = "number" placeholder = "number"></input>
+    <button onclick = "SaveData()" class = "address">데이터 저장하기</button>
+    <div id="buttonArea"></div> <br><br>
+
+    <table>
+        <label id = "label"></label>
+    </table>
+
+
+    <!--데이터를 수정하거나 삭제하시는 방법
+    1. 데이터 불러오기 버튼을 클릭 - 그렇게 되었을 경우 lable 태그 안에 데이터가 테이블 형식으로 나타나고, 수정 및 삭제가 가능한 버튼이 생성됩니다.
+    2. 수정하거나 삭제하고자 하는 데이터 행을 클릭 - 그렇게 되었을 경우 해당 데이터가 input 태그 안에 채워집니다.
+    3. 수정하기 또는 삭제하기 버튼 클릭 - 그렇게 되었을 경우 해당 데이터가 수정 또는 삭제됩니다.
+    -->
+
+
+    <script>
+        const API_URL = 'http://localhost:3000/students';
+
+        function LoadData(){
+            fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                let html = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                    <tr style="background-color: #ddd; font-weight: bold;">
+                        <th style="padding: 8px; text-align: left; width: 40px;">No.</th>
+                        <th style="padding: 8px; text-align: left;">Name</th>
+                        <th style="padding: 8px; text-align: left; width: 60px;">Age</th>
+                        <th style="padding: 8px; text-align: left;">Major</th>
+                        <th style="padding: 8px; text-align: left; width: 80px;">Number</th>
+                    </tr>
+                    </thead>
+                <tbody>
+            `;
+
+            data.forEach((student, index) => {
+                 html += `
+                    <tr style="border-bottom: 1px solid #eee; cursor: pointer;" 
+                    onclick='fillForm("${student.id}", "${student.name}", ${student.age}, "${student.major}", "${student.student_number}")'>
+                        <td style="padding: 8px;">${index + 1}</td>
+                        <td style="padding: 8px;">${student.name}</td>
+                        <td style="padding: 8px;">${student.age}</td>
+                        <td style="padding: 8px;">${student.major}</td>
+                        <td style="padding: 8px;">${student.student_number || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            label.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function SaveData(){
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const major = document.getElementById('major').value;
+            const number = document.getElementById('number').value;
+
+            const studentData = {
+                name: name,
+                age: age,
+                major: major,
+                student_number: number
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(studentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                LoadData(); 
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        function UpdateData(id){  
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const major = document.getElementById('major').value;
+            const number = document.getElementById('number').value;
+
+            const studentData = {
+                name: name,
+                age: parseInt(age),
+                major: major,
+                student_number: number
+            };
+
+            fetch(`${API_URL}/${id}`, { 
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(studentData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('수정 성공:', data);
+                    alert('수정되었습니다!'); 
+                    LoadData(); 
+                    document.getElementById('buttonArea').innerHTML = ''; 
+                })
+                .catch((error) => {
+                    console.error('수정 실패:', error);
+                    alert('수정에 실패했습니다!');
+                });
+        }
+
+        function DeleteData(id){  
+            fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('삭제 성공');
+                    alert('삭제되었습니다!'); 
+                    LoadData(); 
+                    document.getElementById('buttonArea').innerHTML = ''; 
+                } else {
+                    throw new Error('삭제 실패');
+                }
+            })
+            .catch((error) => {
+                console.error('삭제 실패:', error);
+                alert('삭제에 실패했습니다!');
+            });
+        }
+
+        function fillForm(id, name, age, major, studentNumber) {  
+            document.getElementById('name').value = name;
+            document.getElementById('age').value = age;
+            document.getElementById('major').value = major;
+            document.getElementById('number').value = studentNumber;
+    
+            document.getElementById('buttonArea').innerHTML = 
+                `<button style="width:100px; height:30px;" onclick="UpdateData('${id}')">수정하기</button>`;
+            document.getElementById('buttonArea').innerHTML += 
+                `<button style="width:100px; height:30px;" onclick="DeleteData('${id}')">삭제하기</button>`;
+        }
+    </script>
+
+    <style>
+        header{
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        address{
+            width : 30px;
+            height : 15px;
+        }
+
+        label{
+            width : 700px;
+            height: 300px;          
+            overflow-y: auto;
+            display : block;
+            background-color : lightyellow;
+        }
+    </style>
+</body>
+</html>
