@@ -59,16 +59,23 @@
     {
       "id": "9",
       "name": "Ian",
-      "age": 23,
-      "major": "Economics",
+      "age": 24,
+      "major": "Electronic",
       "student_number": "S90123"
     },
     {
+      "id": "10",
       "name": "Jane",
       "age": 23,
       "major": "Art",
-      "student_number": "S01234",
-      "id": "10"
+      "student_number": "S01234"
+    },
+    {
+      "id": "1653",
+      "name": "Tom",
+      "age": "24",
+      "major": "Computer",
+      "student_number": "S91384"
     }
   ]
 }
